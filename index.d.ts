@@ -3,17 +3,17 @@ import 'koa';
 export interface ApiFailDetail {
   message?: string;
   code?: number;
-  httpCode?: number;
+  status?: number;
   data?: any;
 }
 
 export declare class ApiFail extends Error {
-  constructor(message?: string, code?: number, data?: any, httpCode?: number);
+  constructor(message?: string, code?: number, data?: any, status?: number);
 }
 
 export interface ApiOptions {
   failCode?: number;
-  failHttpCode?: number;
+  failStatus?: number;
   success?(data: any): any;
   fail?(err: ApiFail): any;
 }

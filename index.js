@@ -7,14 +7,14 @@ class ApiFail extends Error {
    * @param {string} [message] 错误消息
    * @param {number} [code] 错误代码
    * @param {*} [data] 附加数据
-   * @param {number} [httpCode] 错误代码
+   * @param {number} [status] HTTP代码
    */
-  constructor(message, code, data, httpCode) {
+  constructor(message, code, data, status) {
     super(message);
     this.expose = true;
     this.code = code;
     this.data = data;
-    this.httpCode = httpCode || 422;
+    this.status = status || 422;
   }
 }
 
@@ -24,7 +24,7 @@ class ApiFail extends Error {
  * @param {object} [options] 配置项
  * @param {object} [options.api] API配置
  * @param {number} [options.api.failCode=undefined] 默认失败代码
- * @param {number} [options.api.failHttpCode=422] 默认失败HTTP状态码
+ * @param {number} [options.api.failStatus=422] 默认失败HTTP状态码
  * @param {function(object):object} [options.api.success] 成功结果包装
  * @param {function(ApiFail):object} [options.api.fail] 失败结果包装
  */
@@ -33,7 +33,7 @@ function setup(core, options) {
   const originContextOnError = app.context.onerror;
 
   options = Object.assign({
-    failHttpCode: 422,
+    failStatus: 422,
     fail(err) {
       return {
         code: err.code,
@@ -59,7 +59,7 @@ function setup(core, options) {
     const data = options.fail.call(this, err);
     const msg = JSON.stringify(data);
     this.type = 'json';
-    this.status = err.httpCode || 422;
+    this.status = err.status || 422;
     this.length = Buffer.byteLength(msg);
     this.res.end(msg);
   };
@@ -69,13 +69,13 @@ function setup(core, options) {
    * @param {string|object} msg 错误消息 | 消息对象
    * @param {string} msg.message 错误消息
    * @param {number} [msg.code] 错误代码
-   * @param {number} [msg.httpCode] 自定义 http-code
+   * @param {number} [msg.status] 自定义 http 错误代码
    * @param {*} [msg.data] 附加数据
    * @throws {HttpError}
    */
   app.context.fail = function fail(msg) {
-    const { code, message, data, httpCode } = typeof msg === 'object' ? msg : { message: msg };
-    throw new ApiFail(message, code || options.failCode, data, httpCode || options.failHttpCode);
+    const { code, message, data, status } = typeof msg === 'object' ? msg : { message: msg };
+    throw new ApiFail(message, code || options.failCode, data, status || options.failStatus);
   };
 
   /**
