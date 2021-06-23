@@ -54,12 +54,28 @@ function setup(core, options) {
    */
   app.context.onerror = function onerror(err) {
     if (null == err) return;
-    if (!(err instanceof ApiFail)) return originContextOnError.call(this, err);
+    let data;
+    let status = 500;
+    if (!(err instanceof ApiFail)) {
+      if (debug.enabled) {
+        // error info
+        data = {
+          name: err.name,
+          code: err.code,
+          message: err.message,
+          stack: err.stack,
+        };
+      } else {
+        return originContextOnError.call(this, err);
+      }
+    } else {
+      status = err.status || 422;
+      data = options.fail.call(this, err);
+    }
     // respond
-    const data = options.fail.call(this, err);
     const msg = JSON.stringify(data);
     this.type = 'json';
-    this.status = err.status || 422;
+    this.status = status;
     this.length = Buffer.byteLength(msg);
     this.res.end(msg);
   };
