@@ -1,8 +1,8 @@
-'use strict';
+import Debug from 'debug';
 
-const debug = require('debug')('zenweb:api');
+const debug = Debug('zenweb:api');
 
-class ApiFail extends Error {
+export class ApiFail extends Error {
   /**
    * @param {string} [message] 错误消息
    * @param {number} [code] 错误代码
@@ -28,7 +28,7 @@ class ApiFail extends Error {
  * @param {function(object):object} [options.api.success] 成功结果包装
  * @param {function(ApiFail):object} [options.api.fail] 失败结果包装
  */
-function setup(core, options) {
+export function setup(core, options) {
   const app = core.koa;
   const originContextOnError = app.context.onerror;
 
@@ -104,8 +104,3 @@ function setup(core, options) {
     this.body = options.success.call(this, data);
   };
 }
-
-module.exports = {
-  setup,
-  ApiFail,
-};

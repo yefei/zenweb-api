@@ -1,5 +1,3 @@
-import 'koa';
-
 export interface ApiFailDetail {
   message?: string;
   code?: number;
