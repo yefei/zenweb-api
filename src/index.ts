@@ -130,7 +130,7 @@ export function setup(core: Core, option?: ApiOption) {
 }
 
 declare module 'koa' {
-  interface BaseContext {
+  interface DefaultContext {
     fail(msg: string | ApiFailDetail): never;
     success(data?: any): any;
   }
