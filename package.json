@@ -1,6 +1,6 @@
 {
   "name": "@zenweb/api",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Zenweb API module",
   "exports": "./dist/index.js",
   "typings": "./dist/index.d.ts",
