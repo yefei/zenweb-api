@@ -1,14 +1,14 @@
 {
   "name": "@zenweb/api",
-  "version": "2.1.1",
+  "version": "2.3.0",
   "description": "Zenweb API module",
   "exports": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "prepublishOnly": "tsc",
+    "prepublishOnly": "tsc --build --clean && tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": {
@@ -31,11 +31,6 @@
     "url": "https://github.com/yefei/zenweb-api/issues"
   },
   "devDependencies": {
-    "@types/debug": "^4.1.7",
-    "@types/koa": "^2.13.4",
-    "@zenweb/core": "^2.1.1"
-  },
-  "dependencies": {
-    "debug": "^4.3.3"
+    "@zenweb/core": "^2.3.1"
   }
 }
