@@ -73,7 +73,7 @@ export default function setup(option?: ApiOption): SetupFunction {
     setup.debug('option: %o', option);
 
     // 捕获 context 中的错误异常
-    setup.middleware(async (ctx, next) => {
+    setup.middleware(async function failCatch(ctx, next) {
       try {
         await next();
       } catch (err) {
