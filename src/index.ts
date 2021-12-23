@@ -71,39 +71,21 @@ export default function setup(option?: ApiOption): SetupFunction {
   option = Object.assign({}, defaultOption, option);
   return function api(setup) {
     setup.debug('option: %o', option);
-    const originContextOnError = setup.koa.context.onerror;
 
     // 捕获 context 中的错误异常
-    /**
-     * 自定义错误处理
-     */
-    function onerror(err: Error | ApiFail) {
-      if (null == err) return;
-      let data;
-      let status = 500;
-      if (!(err instanceof ApiFail)) {
-        if (setup.debug.enabled) {
-          // error info
-          data = {
-            name: err.name,
-            message: err.message,
-            stack: err.stack,
-          };
-        } else {
-          return originContextOnError.call(this, err);
+    setup.middleware(async (ctx, next) => {
+      try {
+        await next();
+      } catch (err) {
+        if (err instanceof ApiFail) {
+          ctx.status = err.status || 422;
+          ctx.type = 'json';
+          ctx.body = option.fail(this, err);
+          return;
         }
-      } else {
-        status = err.status || 422;
-        data = option.fail(this, err);
+        throw err;
       }
-      // respond
-      const msg = JSON.stringify(data);
-      this.type = 'json';
-      this.status = status;
-      this.length = Buffer.byteLength(msg);
-      this.res.end(msg);
-    }
-    setup.defineContextProperty('onerror', { value: onerror });
+    });
 
     // 在 ctx 中安装 fail 函数
     /**
