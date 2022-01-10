@@ -46,7 +46,7 @@ export class ApiFail extends Error {
     super(message);
     this.code = code;
     this.data = data;
-    this.status = status || 422;
+    this.status = status;
   }
 }
 
@@ -78,7 +78,7 @@ export default function setup(option?: ApiOption): SetupFunction {
         await next();
       } catch (err) {
         if (err instanceof ApiFail) {
-          ctx.status = err.status || 422;
+          ctx.status = err.status || option.failStatus;
           ctx.type = 'json';
           ctx.body = option.fail(this, err);
           return;
